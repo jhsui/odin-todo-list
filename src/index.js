@@ -1,7 +1,9 @@
 import { newTodoUIFactory } from "./ui/todoUIFactory";
+import { todoSubmitButtonFunction } from "./logic/event";
 
-const container = document.querySelector("#container");
+const todoInputContainer = document.querySelector("#todo-input-container");
+todoInputContainer.appendChild(newTodoUIFactory());
+todoSubmitButtonFunction();
 
-container.appendChild(newTodoUIFactory());
-// container.appendChild(newTodoUIFactory());
-// container.appendChild(newTodoUIFactory());
+// const container = document.querySelector("#container");
+// todoPopulater();
