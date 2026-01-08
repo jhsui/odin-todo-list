@@ -17,7 +17,7 @@ function storageAvailable(type) {
   }
 }
 
-const getArray = function () {
+const getArray = function (id) {
   //   let array = JSON.parse(localStorage.getItem("array"));
 
   //   if (array === null) {
@@ -25,7 +25,7 @@ const getArray = function () {
   //   }
 
   //   return array;
-  const raw = localStorage.getItem("array");
+  const raw = localStorage.getItem(id);
   if (raw === null) return [];
   try {
     const parsed = JSON.parse(raw);
