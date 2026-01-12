@@ -38,4 +38,6 @@ const todoPopulater = function (id) {
   }
 };
 
+const listOpenerPopulater = function () {};
+
 export { todoPopulater };

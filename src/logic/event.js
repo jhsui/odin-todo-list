@@ -1,5 +1,5 @@
 import { getArray, storageAvailable } from "./storage";
-import { todoPopulater } from "../ui/todosPopulate";
+import { todoPopulater } from "../ui/populater";
 
 let currentListID;
 
@@ -7,7 +7,7 @@ let currentListID;
 const getListCounter = () => Number(localStorage.getItem("listCounter") ?? "0");
 const setListCounter = (n) => localStorage.setItem("listCounter", String(n));
 
-// add function for the submit button
+// add function of the submit button
 const todoSubmitButtonFunction = function () {
   const button = document.getElementById("submit-button");
 
@@ -45,7 +45,7 @@ const newTodoObject = function () {
 
 // return the array with the new value
 const arrayStorage = function (todoItem) {
-  const array = getArray();
+  const array = getArray(currentListID);
 
   array.push(todoItem);
 

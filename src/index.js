@@ -1,6 +1,6 @@
 import { newTodoUIFactory } from "./ui/todoUIFactory";
 import { todoSubmitButtonFunction } from "./logic/event";
-import { todoPopulater } from "./ui/todosPopulate";
+import { todoPopulater } from "./ui/populater";
 import { listOpenerFunction } from "./logic/event";
 import { createNewListButton } from "./logic/event";
 
