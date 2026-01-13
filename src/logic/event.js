@@ -15,7 +15,12 @@ const todoSubmitButtonFunction = function () {
   const button = document.getElementById("submit-button");
 
   button.addEventListener("click", () => {
-    // the defaule id?
+    const lists = getLists();
+
+    if (lists.size === 0) {
+      createNewListButton();
+    }
+
     if (!getCurrentListID()) {
       console.log("Please select or create a list first.");
       return;
