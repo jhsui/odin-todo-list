@@ -1,33 +1,55 @@
-import { getArray, storageAvailable } from "./storage";
-import { todoPopulater } from "../ui/populater";
+import {
+  getLists,
+  storageAvailable,
+  getCurrentListID,
+  setCurrentListID,
+} from "./storage";
+import { todoPopulater } from "../ui/ui";
 
-let currentListID;
-
-// let listCounter = 0;
 const getListCounter = () => Number(localStorage.getItem("listCounter") ?? "0");
 const setListCounter = (n) => localStorage.setItem("listCounter", String(n));
 
 // add function of the submit button
+// store all the lists inside the key "lists"
 const todoSubmitButtonFunction = function () {
   const button = document.getElementById("submit-button");
 
   button.addEventListener("click", () => {
     // the defaule id?
-    if (!currentListID) {
+    if (!getCurrentListID()) {
       console.log("Please select or create a list first.");
       return;
     }
 
     if (storageAvailable("localStorage")) {
-      localStorage.setItem(
-        currentListID,
-        JSON.stringify(arrayStorage(newTodoObject()))
-      );
-      todoPopulater(currentListID);
+      const lists = saveTodo(newTodoObject());
+      localStorage.setItem("lists", JSON.stringify([...lists]));
+
+      // localStorage.setItem("lists", JSON.stringify(saveTodo(newTodoObject())));
+
+      // update current todo list
+      todoPopulater(getCurrentListID());
     } else {
       console.log("unable to store data");
     }
   });
+};
+
+// push todo item into its corresponding list
+const saveTodo = function (todoItem) {
+  // "lists" is a map, key is button id and value is an object which contains the name of the button and an array of its todos
+  const lists = getLists();
+
+  const id = getCurrentListID();
+  // currentList is an object with two properties: name of the button and array of its todos
+  const currentList = lists.get(id);
+
+  // if (!currentList) throw new Error("Current list not found for currentListID");
+
+  currentList.array.push(todoItem);
+  lists.set(id, currentList);
+
+  return lists;
 };
 
 // return the data of the new todo item as an object
@@ -43,19 +65,11 @@ const newTodoObject = function () {
   };
 };
 
-// return the array with the new value
-const arrayStorage = function (todoItem) {
-  const array = getArray(currentListID);
-
-  array.push(todoItem);
-
-  return array;
-};
-
 const deleteButtonFunction = function () {
   //
 };
 
+// add function for each list button in the list container
 const listOpenerFunction = function () {
   const listOpener = document.getElementById("list-opener");
 
@@ -66,41 +80,36 @@ const listOpenerFunction = function () {
 
     if (button.id === "new-list") {
       createNewListButton();
-      todoPopulater(currentListID);
+      todoPopulater(getCurrentListID());
       return;
     }
 
-    currentListID = button.id;
-    todoPopulater(currentListID);
+    setCurrentListID(button.id);
+    todoPopulater(getCurrentListID());
   });
 };
 
-// const newListButtonFunction = function () {
-//   const newListButton = document.getElementById("new-list");
-
-//   newListButton.addEventListener("click", () => {
-//     createNewListButton();
-//     todoPopulater(currentListID);
-//   });
-// };
-
+// create a new list button
 const createNewListButton = function () {
   const listOpener = document.getElementById("list-opener");
-
   const newListOpenerButton = document.createElement("button");
 
   newListOpenerButton.id = crypto.randomUUID();
-
-  currentListID = newListOpenerButton.id;
-  //   newListOpenerButton.addEventListener("click", () => {
-  //     currentListID = newListOpenerButton.id;
-  //   });
-
-  localStorage.setItem(currentListID, JSON.stringify([]));
+  setCurrentListID(newListOpenerButton.id);
 
   let counter = getListCounter();
-  newListOpenerButton.textContent = `list-${counter + 1}`;
   setListCounter(counter + 1);
+
+  const lists = getLists();
+  const newList = {
+    buttonName: `list-${counter + 1}`,
+    array: [],
+  };
+  lists.set(newListOpenerButton.id, newList);
+
+  localStorage.setItem("lists", JSON.stringify([...lists]));
+
+  newListOpenerButton.textContent = `list-${counter + 1}`;
   listOpener.appendChild(newListOpenerButton);
 };
 

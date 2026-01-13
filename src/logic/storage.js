@@ -1,3 +1,13 @@
+let currentListID;
+
+function getCurrentListID() {
+  return currentListID;
+}
+
+function setCurrentListID(id) {
+  currentListID = id;
+}
+
 function storageAvailable(type) {
   let storage;
   try {
@@ -17,22 +27,20 @@ function storageAvailable(type) {
   }
 }
 
-const getArray = function (id) {
-  //   let array = JSON.parse(localStorage.getItem("array"));
+// get the data of lists
+const getLists = function () {
+  const raw = localStorage.getItem("lists");
 
-  //   if (array === null) {
-  //     array = [];
-  //   }
+  if (raw === null) return new Map();
 
-  //   return array;
-  const raw = localStorage.getItem(id);
-  if (raw === null) return [];
   try {
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    // const parsed = JSON.parse(raw);
+    // return parsed instanceof Map ? parsed : new Map();
+    const entries = JSON.parse(raw);
+    return new Map(entries);
   } catch {
-    return [];
+    return new Map();
   }
 };
 
-export { storageAvailable, getArray };
+export { storageAvailable, getLists, getCurrentListID, setCurrentListID };

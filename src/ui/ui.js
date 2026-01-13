@@ -1,3 +1,68 @@
+import { getLists, getCurrentListID } from "../logic/storage";
+
+// populate current list
+const todoPopulater = function () {
+  const lists = getLists();
+  let array = [];
+  if (lists.has(getCurrentListID())) {
+    array = lists.get(getCurrentListID()).array;
+  } else {
+    console.log("you dont have this key in the Map!");
+    return;
+  }
+
+  const listContainer = document.getElementById("list-container");
+  listContainer.innerHTML = "";
+
+  for (let i = 0; i < array.length; i++) {
+    const todo = array[i];
+    const todoDiv = document.createElement("div");
+
+    const title = document.createElement("span");
+    title.textContent = todo.title;
+    todoDiv.appendChild(title);
+
+    const description = document.createElement("span");
+    description.textContent = todo.description;
+    todoDiv.appendChild(description);
+
+    const date = document.createElement("span");
+    date.textContent = todo.date;
+    todoDiv.appendChild(date);
+
+    const priority = document.createElement("span");
+    priority.textContent = todo.priority;
+    todoDiv.appendChild(priority);
+
+    const editButton = document.createElement("button");
+    editButton.textContent = "Edit";
+    todoDiv.appendChild(editButton);
+
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "Delete";
+    todoDiv.appendChild(deleteButton);
+
+    listContainer.appendChild(todoDiv);
+  }
+};
+
+// display all the lists
+const listOpenerPopulater = () => {
+  const lists = getLists();
+  const listOpener = document.getElementById("list-opener");
+
+  lists.forEach((list, id) => {
+    const listButton = document.createElement("button");
+
+    listButton.textContent = list.buttonName;
+    listButton.id = id;
+    listButton.type = "button";
+
+    listOpener.appendChild(listButton);
+  });
+};
+
+// create a form to submit new todo items
 const newTodoUIFactory = function () {
   const todoContainer = document.createElement("form");
   todoContainer.id = "todo-item";
@@ -62,4 +127,4 @@ const newTodoUIFactory = function () {
   return todoContainer;
 };
 
-export { newTodoUIFactory };
+export { todoPopulater, newTodoUIFactory, listOpenerPopulater };
