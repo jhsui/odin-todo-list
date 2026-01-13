@@ -36,8 +36,10 @@ const todoPopulater = function () {
 
     const editButton = document.createElement("button");
     editButton.textContent = "Edit";
-    editButton.class = "edit-button";
+    editButton.className = "edit-button";
     editButton.type = "button";
+    editButton.dataset.index = i;
+
     todoDiv.appendChild(editButton);
 
     const deleteButton = document.createElement("button");
@@ -59,7 +61,7 @@ const listOpenerPopulater = () => {
   lists.forEach((list, id) => {
     const listButton = document.createElement("button");
 
-    listButton.textContent = list.buttonName;
+    listButton.textContent = list.listName;
     listButton.id = id;
     listButton.type = "button";
 

@@ -4,7 +4,7 @@ import {
   getCurrentListID,
   setCurrentListID,
 } from "./storage";
-import { todoPopulater } from "../ui/ui";
+import { todoPopulater, newTodoUIFactory } from "../ui/ui";
 
 const getListCounter = () => Number(localStorage.getItem("listCounter") ?? "0");
 const setListCounter = (n) => localStorage.setItem("listCounter", String(n));
@@ -22,7 +22,9 @@ const todoSubmitButtonFunction = function () {
     }
 
     if (storageAvailable("localStorage")) {
-      const lists = saveTodo(newTodoObject());
+      const form = document.getElementById("todo-item");
+
+      const lists = saveTodo(newTodoObject(form));
       localStorage.setItem("lists", JSON.stringify([...lists]));
 
       // localStorage.setItem("lists", JSON.stringify(saveTodo(newTodoObject())));
@@ -53,51 +55,15 @@ const saveTodo = function (todoItem) {
 };
 
 // return the data of the new todo item as an object
-const newTodoObject = function () {
-  const form = document.getElementById("todo-item");
+const newTodoObject = function (form) {
   const formData = new FormData(form);
 
   return {
-    title: formData.get("todo_title") + " ",
-    description: formData.get("description") + " ",
-    date: formData.get("date") + " ",
-    priority: formData.get("priority") + " ",
+    title: formData.get("todo_title"),
+    description: formData.get("description"),
+    date: formData.get("date"),
+    priority: formData.get("priority"),
   };
-};
-
-/// need to deal with new created buttons issues
-// the function of delete buttons in ONE list
-const deleteButtonFunction = function () {
-  //
-  const listContainer = document.getElementById("list-container");
-  // if (deleteButtonList.length > 0) {
-  //   for (let i = 0; i < deleteButtonList.length; i++) {
-  //     deleteButtonList[i].addEventListener("click", () => {
-  //       const index = i;
-  //       list.array.splice(index, 1);
-  //       lists.set(id, list);
-  //       localStorage.setItem("lists", JSON.stringify([...lists]));
-  //       todoPopulater();
-  //     });
-  //   }
-  // }
-  listContainer.addEventListener("click", (e) => {
-    const btn = e.target.closest(".delete-button");
-    if (!btn) return;
-
-    const index = Number(btn.dataset.index);
-    if (Number.isNaN(index)) return;
-
-    const lists = getLists();
-    const id = getCurrentListID();
-    const list = lists.get(id);
-
-    list.array.splice(index, 1);
-    lists.set(id, list);
-    localStorage.setItem("lists", JSON.stringify([...lists]));
-
-    todoPopulater();
-  });
 };
 
 // add function for each list button in the list container
@@ -133,7 +99,7 @@ const createNewListButton = function () {
 
   const lists = getLists();
   const newList = {
-    buttonName: `list-${counter + 1}`,
+    listName: `list-${counter + 1}`,
     array: [],
   };
   lists.set(newListOpenerButton.id, newList);
@@ -144,9 +110,94 @@ const createNewListButton = function () {
   listOpener.appendChild(newListOpenerButton);
 };
 
+// the function of delete buttons in ONE list
+const deleteButtonFunction = () => {
+  //
+  const listContainer = document.getElementById("list-container");
+  // if (deleteButtonList.length > 0) {
+  //   for (let i = 0; i < deleteButtonList.length; i++) {
+  //     deleteButtonList[i].addEventListener("click", () => {
+  //       const index = i;
+  //       list.array.splice(index, 1);
+  //       lists.set(id, list);
+  //       localStorage.setItem("lists", JSON.stringify([...lists]));
+  //       todoPopulater();
+  //     });
+  //   }
+  // }
+  listContainer.addEventListener("click", (e) => {
+    const btn = e.target.closest(".delete-button");
+    if (!btn) return;
+
+    const index = Number(btn.dataset.index);
+    if (Number.isNaN(index)) return;
+
+    const lists = getLists();
+    const id = getCurrentListID();
+    const list = lists.get(id);
+
+    list.array.splice(index, 1);
+    lists.set(id, list);
+    localStorage.setItem("lists", JSON.stringify([...lists]));
+
+    todoPopulater();
+  });
+};
+
+const editButtonFunction = () => {
+  const listContainer = document.getElementById("list-container");
+
+  listContainer.addEventListener("click", (e) => {
+    const btn = e.target.closest(".edit-button");
+    if (!btn) return;
+
+    const index = Number(btn.dataset.index);
+    if (Number.isNaN(index)) return;
+
+    const lists = getLists();
+    const id = getCurrentListID();
+    const list = lists.get(id);
+
+    const parentDiv = btn.parentElement;
+
+    const editform = newTodoUIFactory();
+
+    const todoObject = list.array[index];
+
+    editform.elements.todo_title.value = todoObject.title;
+    editform.elements.description.value = todoObject.description;
+    editform.elements.date.value = todoObject.date;
+    editform.elements.priority.value = todoObject.priority;
+
+    const submitButtonOfEdit = editform.querySelector("#submit-button");
+
+    submitButtonOfEdit.addEventListener("click", () => {
+      if (!getCurrentListID()) {
+        console.log("Please select or create a list first.");
+        return;
+      }
+
+      if (storageAvailable("localStorage")) {
+        // const lists = saveTodo(newTodoObject(editform));
+        list.array.splice(index, 1, newTodoObject(editform));
+        lists.set(id, list);
+        localStorage.setItem("lists", JSON.stringify([...lists]));
+
+        // update current todo list
+        todoPopulater();
+      } else {
+        console.log("unable to store data");
+      }
+    });
+
+    parentDiv.appendChild(editform);
+  });
+};
+
 export {
   todoSubmitButtonFunction,
   createNewListButton,
   listOpenerFunction,
   deleteButtonFunction,
+  editButtonFunction,
 };
