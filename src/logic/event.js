@@ -59,8 +59,8 @@ const newTodoObject = function (form) {
   const formData = new FormData(form);
 
   return {
-    title: formData.get("todo_title") + " ",
-    description: formData.get("description") + " ",
+    title: formData.get("todo_title"),
+    description: formData.get("description"),
     date: formData.get("date"),
     priority: formData.get("priority"),
   };
@@ -154,14 +154,15 @@ const editButtonFunction = () => {
     const index = Number(btn.dataset.index);
     if (Number.isNaN(index)) return;
 
-    const lists = getLists();
-    const id = getCurrentListID();
-    const list = lists.get(id);
-
     const parentDiv = btn.parentElement;
     if (parentDiv.querySelector(".edit-form")) {
       return;
     }
+
+    const lists = getLists();
+    const id = getCurrentListID();
+    const list = lists.get(id);
+
     const editform = newTodoUIFactory();
 
     const todoObject = list.array[index];
