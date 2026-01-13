@@ -28,7 +28,7 @@ const todoSubmitButtonFunction = function () {
       // localStorage.setItem("lists", JSON.stringify(saveTodo(newTodoObject())));
 
       // update current todo list
-      todoPopulater(getCurrentListID());
+      todoPopulater();
     } else {
       console.log("unable to store data");
     }
@@ -58,15 +58,46 @@ const newTodoObject = function () {
   const formData = new FormData(form);
 
   return {
-    title: formData.get("todo_title"),
-    description: formData.get("description"),
-    date: formData.get("date"),
-    priority: formData.get("priority"),
+    title: formData.get("todo_title") + " ",
+    description: formData.get("description") + " ",
+    date: formData.get("date") + " ",
+    priority: formData.get("priority") + " ",
   };
 };
 
+/// need to deal with new created buttons issues
+// the function of delete buttons in ONE list
 const deleteButtonFunction = function () {
   //
+  const listContainer = document.getElementById("list-container");
+  // if (deleteButtonList.length > 0) {
+  //   for (let i = 0; i < deleteButtonList.length; i++) {
+  //     deleteButtonList[i].addEventListener("click", () => {
+  //       const index = i;
+  //       list.array.splice(index, 1);
+  //       lists.set(id, list);
+  //       localStorage.setItem("lists", JSON.stringify([...lists]));
+  //       todoPopulater();
+  //     });
+  //   }
+  // }
+  listContainer.addEventListener("click", (e) => {
+    const btn = e.target.closest(".delete-button");
+    if (!btn) return;
+
+    const index = Number(btn.dataset.index);
+    if (Number.isNaN(index)) return;
+
+    const lists = getLists();
+    const id = getCurrentListID();
+    const list = lists.get(id);
+
+    list.array.splice(index, 1);
+    lists.set(id, list);
+    localStorage.setItem("lists", JSON.stringify([...lists]));
+
+    todoPopulater();
+  });
 };
 
 // add function for each list button in the list container
@@ -80,12 +111,12 @@ const listOpenerFunction = function () {
 
     if (button.id === "new-list") {
       createNewListButton();
-      todoPopulater(getCurrentListID());
+      todoPopulater();
       return;
     }
 
     setCurrentListID(button.id);
-    todoPopulater(getCurrentListID());
+    todoPopulater();
   });
 };
 
@@ -113,4 +144,9 @@ const createNewListButton = function () {
   listOpener.appendChild(newListOpenerButton);
 };
 
-export { todoSubmitButtonFunction, createNewListButton, listOpenerFunction };
+export {
+  todoSubmitButtonFunction,
+  createNewListButton,
+  listOpenerFunction,
+  deleteButtonFunction,
+};

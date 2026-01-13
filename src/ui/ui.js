@@ -36,10 +36,15 @@ const todoPopulater = function () {
 
     const editButton = document.createElement("button");
     editButton.textContent = "Edit";
+    editButton.class = "edit-button";
+    editButton.type = "button";
     todoDiv.appendChild(editButton);
 
     const deleteButton = document.createElement("button");
     deleteButton.textContent = "Delete";
+    deleteButton.className = "delete-button";
+    deleteButton.type = "button";
+    deleteButton.dataset.index = i;
     todoDiv.appendChild(deleteButton);
 
     listContainer.appendChild(todoDiv);

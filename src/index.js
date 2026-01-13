@@ -2,7 +2,7 @@ import { newTodoUIFactory, listOpenerPopulater } from "./ui/ui";
 import {
   todoSubmitButtonFunction,
   listOpenerFunction,
-  createNewListButton,
+  deleteButtonFunction,
 } from "./logic/event";
 
 const todoInputContainer = document.querySelector("#todo-input-container");
@@ -16,3 +16,4 @@ todoSubmitButtonFunction();
 
 listOpenerPopulater();
 listOpenerFunction();
+deleteButtonFunction();
